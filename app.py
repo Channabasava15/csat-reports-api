@@ -44,23 +44,14 @@ config = {
 }
 
 # Email configuration
-# EMAIL_CONFIG = {
-#     'sender': 'channabasava@ayurvaid.com',
-#     'password': 'muyqtjjxcpafqafg',
-#     'smtp_server': 'smtp.mail.yahoo.com',
-#     'smtp_port': 465,
-#     'receivers': ['channabasavah50@gmail.com']
-# }
-# Email configuration - TRY THESE ALTERNATIVES
 EMAIL_CONFIG = {
     'sender': 'channabasava@ayurvaid.com',
     'password': 'muyqtjjxcpafqafg',
     'smtp_server': 'smtp.mail.yahoo.com',
-    # Try different ports
-    'smtp_port': 587,  # TLS port instead of SSL
-    'smtp_use_tls': True,  # Use STARTTLS instead of SSL
+    'smtp_port': 465,
     'receivers': ['channabasavah50@gmail.com']
 }
+
 
 # Search configurations
 treatment_searches = [
@@ -344,59 +335,6 @@ def filter_data_by_centre(all_data, centre_name, centre_column_name="AyurVAID Ce
     
     return filtered_data
 
-# def send_email_with_attachment(recipients, subject, body, attachments, job_id=None):
-#     """Send email with attachments"""
-#     if not recipients:
-#         print("   ⚠️ No recipients specified")
-#         return False
-    
-#     msg = EmailMessage()
-#     msg["Subject"] = subject
-#     msg["From"] = EMAIL_CONFIG['sender']
-#     msg["To"] = ", ".join(recipients)
-    
-#     # Add BCC to default receivers for tracking
-#     if EMAIL_CONFIG['receivers']:
-#         msg["Bcc"] = ", ".join(EMAIL_CONFIG['receivers'])
-    
-#     msg.set_content(body)
-    
-#     # Attach files
-#     for filename, data in attachments:
-#         data.seek(0)
-#         msg.add_attachment(
-#             data.read(),
-#             maintype="application",
-#             subtype="vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-#             filename=filename
-#         )
-    
-#     # Send email with retry logic
-#     max_retries = 3
-#     for attempt in range(max_retries):
-#         try:
-#             print(f"   📤 Attempting to send (attempt {attempt + 1}/{max_retries})...")
-            
-#             context = ssl.create_default_context()
-            
-#             with smtplib.SMTP_SSL(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'], context=context) as smtp:
-#                 smtp.set_debuglevel(0)
-#                 smtp.login(EMAIL_CONFIG['sender'], EMAIL_CONFIG['password'])
-#                 smtp.send_message(msg)
-            
-#             print(f"   ✅ Email sent successfully to {', '.join(recipients)}")
-#             return True
-            
-#         except Exception as e:
-#             print(f"   ❌ Attempt {attempt + 1} failed: {str(e)}")
-#             if attempt < max_retries - 1:
-#                 wait_time = 5 * (attempt + 1)
-#                 print(f"   Waiting {wait_time} seconds before retry...")
-#                 time.sleep(wait_time)
-    
-#     print(f"   ❌ Failed to send email after {max_retries} attempts")
-#     return False
-
 def send_email_with_attachment(recipients, subject, body, attachments, job_id=None):
     """Send email with attachments"""
     if not recipients:
@@ -430,21 +368,12 @@ def send_email_with_attachment(recipients, subject, body, attachments, job_id=No
         try:
             print(f"   📤 Attempting to send (attempt {attempt + 1}/{max_retries})...")
             
-            # Check if using TLS or SSL
-            if EMAIL_CONFIG.get('smtp_use_tls', False):
-                # Use TLS (port 587)
-                with smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'], timeout=30) as smtp:
-                    smtp.set_debuglevel(0)
-                    smtp.starttls(context=ssl.create_default_context())
-                    smtp.login(EMAIL_CONFIG['sender'], EMAIL_CONFIG['password'])
-                    smtp.send_message(msg)
-            else:
-                # Use SSL (port 465)
-                context = ssl.create_default_context()
-                with smtplib.SMTP_SSL(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'], context=context, timeout=30) as smtp:
-                    smtp.set_debuglevel(0)
-                    smtp.login(EMAIL_CONFIG['sender'], EMAIL_CONFIG['password'])
-                    smtp.send_message(msg)
+            context = ssl.create_default_context()
+            
+            with smtplib.SMTP_SSL(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'], context=context) as smtp:
+                smtp.set_debuglevel(0)
+                smtp.login(EMAIL_CONFIG['sender'], EMAIL_CONFIG['password'])
+                smtp.send_message(msg)
             
             print(f"   ✅ Email sent successfully to {', '.join(recipients)}")
             return True
@@ -458,7 +387,6 @@ def send_email_with_attachment(recipients, subject, body, attachments, job_id=No
     
     print(f"   ❌ Failed to send email after {max_retries} attempts")
     return False
-
 
 
 
