@@ -48,7 +48,7 @@ EMAIL_CONFIG = {
     'sender': 'channabasava@ayurvaid.com',
     'password': 'tnpyncniqefpcaqn',
     'smtp_server': 'smtp.mail.yahoo.com',
-    'smtp_port': 465,
+    'smtp_port': 587,
     'receivers': ['channabasavah50@gmail.com']
 }
 
@@ -368,10 +368,18 @@ def send_email_with_attachment(recipients, subject, body, attachments, job_id=No
         try:
             print(f"   📤 Attempting to send (attempt {attempt + 1}/{max_retries})...")
             
+            # context = ssl.create_default_context()
+            
+            # with smtplib.SMTP_SSL(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'], context=context) as smtp:
+            #     smtp.set_debuglevel(0)
+            #     smtp.login(EMAIL_CONFIG['sender'], EMAIL_CONFIG['password'])
+            #     smtp.send_message(msg)
             context = ssl.create_default_context()
             
-            with smtplib.SMTP_SSL(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'], context=context) as smtp:
+            # Change to standard SMTP and explicitly use port 587
+            with smtplib.SMTP(EMAIL_CONFIG['smtp_server'], 587) as smtp:
                 smtp.set_debuglevel(0)
+                smtp.starttls(context=context) # Upgrade the connection to secure
                 smtp.login(EMAIL_CONFIG['sender'], EMAIL_CONFIG['password'])
                 smtp.send_message(msg)
             
