@@ -48,7 +48,7 @@ EMAIL_CONFIG = {
     'sender': 'channabasava@ayurvaid.com',
     'password': 'tnpyncniqefpcaqn',
     'smtp_server': 'smtp.mail.yahoo.com',
-    'smtp_port': 456,
+    'smtp_port': 465,
     'receivers': ['channabasavah50@gmail.com']
 }
 
